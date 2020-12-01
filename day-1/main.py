@@ -1,33 +1,18 @@
-numbers = []
+def add_two(nums):
+    for idx, num1 in enumerate(nums):
+        for num2 in nums[idx+1:]:
+            if (num1 + num2) == 2020:
+                return num1 * num2
 
-number_file = open("numbers.txt", "r")
+def add_three(nums):
+    for idx, num1 in enumerate(nums):
+        for idx1, num2 in enumerate(nums[idx+1:]):
+            for num3 in nums[idx1+1:]:
+                if (num1 + num2 + num3) == 2020:
+                    return num1 * num2 * num3
 
-for line in number_file.readlines():
-    numbers.append(int(line))
+with open("numbers.txt") as f:
+    nums = [int(line) for line in f]
 
-first_nr = 0
-second_nr = 0
-
-for first_idx, first in enumerate(numbers):
-    for second_idx, second in enumerate(numbers[first_idx+1:]):
-        if first + second == 2020:
-            print("{} + {} = {}".format(first, second, (first + second)))
-            first_nr = first
-            second_nr = second
-
-print("{} * {} = {}".format(first_nr, second_nr, (first_nr * second_nr)))
-
-first_nr = 0
-second_nr = 0
-third_nr = 0
-
-for first_idx, first in enumerate(numbers):
-    for second_idx, second in enumerate(numbers[first_idx+1:]):
-        for third_idx, third in enumerate(numbers[second_idx+1:]):
-            if first + second + third == 2020:
-                print("{} + {} + {} = {}".format(first, second, third, (first + second + third)))
-                first_nr = first
-                second_nr = second
-                third_nr = third
-
-print("{} * {} * {} = {}".format(first_nr, second_nr, third_nr, (first_nr * second_nr * third_nr)))
+    print("Two numbers\t", add_two(nums))
+    print("Three numbers\t", add_three(nums))
