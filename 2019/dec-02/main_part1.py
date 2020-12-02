@@ -1,4 +1,5 @@
 def process(input):
+    # no clue what this does, but fixed my problem
     input = input[:]
     
     index = 0
