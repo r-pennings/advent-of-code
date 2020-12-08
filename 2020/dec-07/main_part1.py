@@ -1,41 +1,45 @@
-lines = [line.rstrip() for line in open("input.txt")]
+def parse(filename):
+    parents = dict()
+    children = dict()
 
-bag_types = []
-bags = {}
-for line in lines:
-    bag = " ".join(line.split(" ")[:2])
+    with open(filename, "r") as f:
+        lines = f.readlines()
 
-    if bag not in bag_types:
-        bag_types.append(bag)
+    # Figure out which colors we have
+    for line in lines:
+        color = " ".join(line.split()[:2])
+        parents[color] = []
+        children[color] = []
 
-    start_idx = line.index("contain ") + len("contain ")
-    contains = line[start_idx:-1]
+    # Fill in the digraphs
+    for line in lines:
+        words = line.split()
+        if "no other" in line:
+            continue
 
-    all_contains = [" ".join(c.split(" ")[:-1]) for c in contains.split(", ")]
+        parent_color = " ".join(words[:2])
 
-    c_list = {}
-    for c in all_contains:
-        str_list = c.split(" ")
-        key = " ".join(str_list[1:])
-        value = str_list[0]
-        c_list[key] = value
+        child_words = iter(words[4:])
+        while True:
+            count = int(next(child_words))
+            child_adj = next(child_words)
+            child_color = next(child_words)
+            child_name = f"{child_adj} {child_color}"
+            parents[child_name].append(parent_color)
+            children[parent_color].append((child_name, count))
+            if next(child_words)[-1] == ".":
+                break
 
-    all_contains = c_list
-
-    if bag in all_contains:
-        all_contains.update(bags[bag])
-
-    bags[bag] = all_contains
+    return parents, children
 
 
-def check_bag(bags, search_bag, current_bag):
-    if current_bag == search_bag:
-        return 1
-    if current_bag not in bags:
-        return 0
-    else:
-        return max([check_bag(bags, search_bag, bag) for bag in bags[current_bag].keys()])
+def holders(color, parents_graph):
+    result = set(parents_graph[color])
+    for c in parents_graph[color]:
+        result |= holders(c, parents_graph)
+    return result
 
-found_bags = sum([check_bag(bags, "shiny gold", bag) for bag in bags.keys() if bag != "shiny gold"])
 
-print("# of bags", found_bags)
+parents, _ = parse("input.txt")
+gold_holders = len(holders("shiny gold", parents))
+print(f"{gold_holders} different colors can contain 'shiny gold.'")
