@@ -1,42 +1,41 @@
 <?php
 
-ini_set('memory_limit', '-1');
-
-$input = file_get_contents("test.txt");
+$input = file_get_contents("input.txt");
 
 $inputArray = explode(",", $input);
 
-function handle($inputArray, $maxDays): int
+function grow(&$schoolArray)
 {
-    $fishPerAge = array();
+    $tmpZero = $schoolArray[0];
 
-    foreach ($inputArray as $item) {
-        $fishPerAge[] = $item;
+    for ($i = 0; $i < 8; $i++) {
+        $schoolArray[$i] = $schoolArray[$i + 1];
     }
 
-    for ($day = 0; $day < $maxDays; $day++) {
-        $fishPerAgePerDay = array();
-
-        // Update array
-        foreach (range(0, count($array) - 1) as $x) {
-            $array[$x]--;
-
-            if ($array[$x] < 0) {
-                $array[$x] = 6;
-                $array[] = 8;
-            }
-        }
-    }
-
-    return count($array);
+    $schoolArray[8] = $tmpZero;
+    $schoolArray[6] += $tmpZero;
 }
 
-var_dump(microtime(true));
-echo "PART 1: ".handle($inputArray, 80).PHP_EOL;
-var_dump(microtime(true));
+function numberAfterDays($schoolArray, $days)
+{
+    $schoolArrayCopy = [...$schoolArray];
 
-var_dump(microtime(true));
-echo "PART 2: ".handle($inputArray, 200).PHP_EOL;
-var_dump(microtime(true));
-//echo PHP_EOL.PHP_EOL;
-//echo PHP_EOL."PART 2: ".handle($inputArray, 256);
+    for ($i = 0; $i < $days; $i++) {
+        grow($schoolArrayCopy);
+    }
+
+    return array_sum($schoolArrayCopy);
+}
+
+$lanternFishArray = [];
+for ($i = 0; $i < 9; $i++) {
+    $lanternFishArray[$i] = 0;
+}
+
+foreach ($inputArray as $i) {
+    $lanternFishArray[$i]++;
+}
+
+echo "PART 1: ".numberAfterDays($lanternFishArray, 80);
+
+echo "PART 2: ".numberAfterDays($lanternFishArray, 256);
